@@ -1,5 +1,4 @@
-// module.exports = function solveSudoku(matrix) {
-let solveSudoku = function (matrix) {
+module.exports = function solveSudoku(matrix) {
   let m = startMatrix(matrix);
   m = goRaund(m);
   if (checkM(m)) {
@@ -11,14 +10,12 @@ let solveSudoku = function (matrix) {
       else {
         for (let k = 0; k < m[i][j].length; k++) {
           let asM = makeAssumption(m, i, j, k);
+          
           if (checkM(asM)) {
           return asM;
           } 
-          else if (checkM(asM) === false) {
+          else  {
             continue
-          }
-          else if (checkM(asM) === 'need deep') {
-            
           }
         }
       }
@@ -31,31 +28,24 @@ const makeAssumption = function (m, i , j , k) {
   let newM = JSON.parse(JSON.stringify(m));
     newM[i][j] = newM[i][j][k];
     newM = goRaund(newM);
-  return newM
+    return newM
 }
 
-
 const checkM = function(m) {
-  let mainAns = true
   let ans = true
-  for (let i = 0; i < m.length; i++) {
-    for (let j = 0; j < m[0].length; j++) {
-      if (typeof(m[i][j]) === 'number') {
-        continue
-      } 
-      else if (m[i][j] === '') {
-        ans = false
-        break
-      }
-      else {
-        mainAns = false
-      }
-    }
+  let newArr = matrixToOneArray(m)
+  if (newArr.includes([])) {
+    ans = false;
+  }
+  for (let i = 0; i < newArr.length; i++) {
+    if(typeof(newArr[i]) === 'object') {
+      ans = false
+    } 
   }
   for (let i = 0; i < m.length; i++) {
     let mySet = new Set(m[i])
     if (mySet.size !== 9) {
-      ans = false
+      ans = false;
       break
     }  
   }
@@ -66,13 +56,23 @@ const checkM = function(m) {
     }
     let mySet = new Set(colArr)
     if (mySet.size !== 9) {
-          ans = false
+          ans = false;
           break
     }  
   }  
-  if (mainAns) return true;
-  return (ans)?'need deep':false;
+  return ans
 }
+
+
+const matrixToOneArray = function (m) {
+  let newArr = [];
+  for (let i = 0; i < m.length; i++) {
+    for (let j = 0; j < m.length; j++)
+    newArr.push(m[i][j]) 
+  }
+  return newArr
+}
+
 
 const goRaund = function(m) {
   let cheked = true;
@@ -385,17 +385,3 @@ const printMatrix = function (m) {
     rez = ''
   }
 }
-
-let ans = solveSudoku([
-  [7, 0, 0, 5, 0, 0, 0, 0, 0],
-  [0, 0, 5, 0, 0, 0, 0, 0, 0],
-  [0, 2, 0, 0, 0, 4, 8, 0, 0],
-  [0, 0, 0, 0, 0, 0, 4, 1, 0],
-  [5, 0, 4, 7, 0, 0, 0, 0, 0],
-  [0, 1, 0, 6, 4, 0, 0, 5, 0],
-  [6, 9, 8, 2, 3, 5, 1, 0, 0],
-  [4, 5, 7, 1, 0, 8, 2, 3, 6],
-  [1, 3, 0, 4, 0, 7, 0, 0, 0]
-]);
-
-printMatrix(ans)
